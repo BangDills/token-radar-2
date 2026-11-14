@@ -156,7 +156,7 @@ function main(): void {
 
   // 5. Build dossier.json
   const dossier = buildDossier(outDir, { text_max_bytes: 65536 });
-  writeFileSync(join(outDir, 'dossier.json'), JSON.stringify(dossier, null, 2), 'utf-8');
+  writeFileSync(join(outDir, 'dossier.json'), dossier);
 
   // 6. Print one-line summary to stderr and exit 0
   process.stderr.write(
