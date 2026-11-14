@@ -1,6 +1,7 @@
 // main.ts - Token Radar entrypoint (make.fun token-radar-01)
 import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from 'node:fs';
-import { resolve, join } from 'node:path';
+import { resolve, join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { scoreProtocol, type Snapshot, type SnapshotProtocol, type ValuedProtocol, type BoardRow } from './lib/model.ts';
 import { buildDossier } from './vendor/makefun-board.ts';
 
@@ -39,7 +40,7 @@ function isPreToken(p: SnapshotProtocol): boolean {
 
 function main(): void {
   const { inputPath, outDir } = parseArgs();
-  const repoDir = process.cwd();
+  const repoDir = dirname(fileURLToPath(import.meta.url));
 
   // 1. Read snapshot
   const rawInput = readFileSync(inputPath, 'utf-8');
