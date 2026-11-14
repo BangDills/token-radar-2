@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Launch Radar | make.fun</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body class="radar-body">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">
+        <span class="logo-radar-sweep"></span>
+        <span class="brand-icon">RADAR</span>
+      </div>
+      <div class="brand-text">
+        <h1>TOKEN LAUNCH RADAR</h1>
+        <span class="tagline">make.fun bounty token-radar-01 &bull; Institutional Valuation &amp; Farming Intelligence</span>
+      </div>
+    </div>
+    <div class="meta-status">
+      <div class="badge-asof">Snapshot: <span id="as-of-val">2026-11-14</span></div>
+      <div class="badge-status"><span class="pulse-dot"></span> LIVE MODEL ACTIVE</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Top Stats Cards -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">TRACKED PRE-TOKEN PROTOCOLS</div>
+        <div class="stat-value" id="stat-total-pre">-</div>
+        <div class="stat-sub">Screened for unreleased tokens</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-label">PRIORITY WATCHLIST</div>
+        <div class="stat-value text-accent" id="stat-watchlist">-</div>
+        <div class="stat-sub">&ge; $50M TVL floor targets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">TOTAL PRE-TOKEN TVL</div>
+        <div class="stat-value" id="stat-total-tvl">-</div>
+        <div class="stat-sub">Across 40+ decentralized networks</div>
+      </div>
+      <div class="stat-card highlight-green">
+        <div class="stat-label">TOTAL IMPLIED VALUATION</div>
+        <div class="stat-value text-green" id="stat-total-implied">-</div>
+        <div class="stat-sub">5-Factor deterministic value model</div>
+      </div>
+    </section>
+
+    <!-- Navigation / View Tabs -->
+    <nav class="nav-tabs">
+      <div class="tab-group">
+        <button class="tab-btn active" data-tab="pre-token" id="tab-btn-pre">
+          Pre-Token Radar <span class="tab-count" id="count-pre">0</span>
+        </button>
+        <button class="tab-btn" data-tab="watchlist" id="tab-btn-watch">
+          Watchlist Priority <span class="tab-count" id="count-watch">0</span>
+        </button>
+        <button class="tab-btn" data-tab="live" id="tab-btn-live">
+          Trading Reference <span class="tab-count" id="count-live">0</span>
+        </button>
+        <button class="tab-btn" data-tab="model" id="tab-btn-model">
+          Valuation Methodology
+        </button>
+      </div>
+      <div class="actions-right">
+        <button class="btn-secondary" id="btn-show-methodology">How Value is Computed</button>
+      </div>
+    </nav>
+
+    <!-- Filters Bar -->
+    <section class="filters-bar" id="filters-section">
+      <div class="search-box">
+        <span class="search-icon">&telrec;</span>
+        <input type="text" id="search-input" placeholder="Search protocol, category, or chain..." autocomplete="off">
+      </div>
+      <div class="quick-filters">
+        <button class="chip-filter" data-qfilter="all">All</button>
+        <button class="chip-filter" data-qfilter="prime">Prime TGE (240-540d)</button>
+        <button class="chip-filter" data-qfilter="tvl100">&ge; $100M TVL</button>
+        <button class="chip-filter" data-qfilter="multichain">Multi-Chain</button>
+      </div>
+      <div class="filter-controls">
+        <label class="filter-label">Category:
+          <select id="category-filter">
+            <option value="ALL">All Categories</option>
+          </select>
+        </label>
+        <label class="filter-label">Chain:
+          <select id="chain-filter">
+            <option value="ALL">All Chains</option>
+          </select>
+        </label>
+        <label class="filter-label">Sort:
+          <select id="sort-select">
+            <option value="rank-asc">Rank: 1 &rarr; N (Implied Value)</option>
+            <option value="val-desc">Implied Value: High &rarr; Low</option>
+            <option value="tvl-desc">TVL: High &rarr; Low</option>
+            <option value="growth-desc">7d Growth: High &rarr; Low</option>
+            <option value="age-desc">Maturity / Age</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <!-- Pre-Token & Watchlist View Table -->
+    <section class="table-container" id="view-radar">
+      <table class="radar-table" id="table-pre">
+        <thead>
+          <tr>
+            <th class="col-rank">Rank</th>
+            <th class="col-name">Protocol</th>
+            <th class="col-category">Category</th>
+            <th class="col-chains">Chains</th>
+            <th class="col-tvl num">TVL (USD)</th>
+            <th class="col-growth num">7d Growth</th>
+            <th class="col-age">TGE Stage</th>
+            <th class="col-value num">Implied Value</th>
+            <th class="col-action">Farm Strategy</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-pre">
+          <!-- Dynamically populated rows -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Live Tokens Reference Table -->
+    <section class="table-container hidden" id="view-live">
+      <div class="live-notice">
+        <strong>Trading Protocols Reference:</strong> Protocols with actively traded tokens are monitored here to establish peer Mcap/TVL benchmark multiples.
+      </div>
+      <table class="radar-table" id="table-live">
+        <thead>
+          <tr>
+            <th class="col-rank">#</th>
+            <th class="col-name">Protocol</th>
+            <th class="col-category">Category</th>
+            <th class="col-chains">Chains</th>
+            <th class="col-tvl num">TVL (USD)</th>
+            <th class="col-growth num">7d Growth</th>
+            <th class="col-mcap num">Market Cap</th>
+            <th class="col-ratio num">Mcap / TVL</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-live">
+          <!-- Dynamically populated live protocols -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Model Methodology View -->
+    <section class="methodology-card hidden" id="view-model">
+      <h2>Deterministic Implied Valuation Architecture</h2>
+      <p class="lead-text">
+        The radar uses a multi-factor valuation model derived strictly from DefiLlama snapshot metrics, eliminating subjective bias or arbitrary scoring. Every protocol's implied value reflects category multiples, capital growth, TGE window maturity, and multi-chain liquidity dispersion.
+      </p>
+
+      <div class="formula-box">
+        <div class="formula-title">CORE VALUATION FORMULA</div>
+        <code>Implied Value ($) = round( TVL &times; M &times; F_g &times; F_maturity &times; F_c )</code>
+      </div>
+
+      <div class="model-factors-grid">
+        <div class="factor-box">
+          <h3>1. Sector Multiple (M)</h3>
+          <p>Calibrated against Mcap/TVL medians across liquid protocol sectors:</p>
+          <ul class="factor-list">
+            <li><strong>AI Agents:</strong> 0.50x</li>
+            <li><strong>Derivatives / Options:</strong> 0.45x</li>
+            <li><strong>DEX / Launchpad:</strong> 0.35x</li>
+            <li><strong>Basis Trading:</strong> 0.32x</li>
+            <li><strong>RWA / Synthetics:</strong> 0.25x</li>
+            <li><strong>CDP / Debt:</strong> 0.24x</li>
+            <li><strong>Lending / Collateral:</strong> 0.20x</li>
+            <li><strong>Bridges / Cross-Chain:</strong> 0.18x</li>
+            <li><strong>Risk Curators:</strong> 0.18x</li>
+            <li><strong>Yield Farming / Aggregators:</strong> 0.16x</li>
+            <li><strong>Staking / Restaking:</strong> 0.12x</li>
+            <li><strong>Baseline Default:</strong> 0.22x</li>
+          </ul>
+        </div>
+
+        <div class="factor-box">
+          <h3>2. Growth Factor (F_g)</h3>
+          <p>Captures 7-day capital momentum with bounded downside and upside:</p>
+          <div class="sub-formula"><code>F_g = 1 + clamp(change_7d, -50%, +100%) / 100 &times; 0.40</code></div>
+          <p class="factor-desc">Dynamic range from 0.80x (severe capital outflow) to 1.40x (explosive rapid expansion).</p>
+
+          <h3 class="mt-md">3. Maturity Factor (F_maturity)</h3>
+          <p>Days elapsed since tracked launch date (<code>listed_at</code>) modeling empirical TGE window readiness:</p>
+          <ul class="factor-list">
+            <li><strong>Bootstrap (0–90d):</strong> 0.70 &rarr; 0.90 (early development)</li>
+            <li><strong>Growth (90–240d):</strong> 0.90 &rarr; 1.15 (liquidity traction)</li>
+            <li><strong>Prime TGE (240–540d):</strong> 1.15 &rarr; 1.25 (highest launch readiness)</li>
+            <li><strong>Late (540–900d):</strong> 1.25 &rarr; 1.10 (prolonged pre-token fatigue)</li>
+            <li><strong>Dormant (>900d):</strong> 0.95 &rarr; 1.05 (decaying launch likelihood)</li>
+          </ul>
+
+          <h3 class="mt-md">4. Chain Factor (F_c)</h3>
+          <div class="sub-formula"><code>F_c = 1 + min(0.15, max(0, chains - 1) &times; 0.025)</code></div>
+          <p class="factor-desc">Rewards multi-network deployment and cross-ecosystem liquidity reach up to +15%.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Protocol Detail Modal Drawer -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-rank-badge" id="m-rank">#1</div>
+          <div>
+            <h2 id="m-name">Protocol Name</h2>
+            <div class="modal-subtitle">
+              <span id="m-category" class="pill-category">Category</span>
+              <span id="m-slug" class="pill-slug">slug</span>
+              <span id="m-watchlist-tag" class="pill-watchlist hidden">WATCHLIST FLOOR TARGET</span>
+            </div>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modal-close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="metrics-grid">
+          <div class="metric-box">
+            <span class="m-label">Reported TVL</span>
+            <span class="m-val" id="m-tvl">$0</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-label">7d Growth</span>
+            <span class="m-val" id="m-growth">0.0%</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-label">Tracked Age / Stage</span>
+            <span class="m-val" id="m-age">0d</span>
+          </div>
+          <div class="metric-box highlight-gold">
+            <span class="m-label">Implied Valuation (FDV)</span>
+            <span class="m-val text-green" id="m-implied">$0</span>
+          </div>
+        </div>
+
+        <div class="valuation-breakdown-card">
+          <h3>Valuation Multiplier Breakdown</h3>
+          <div class="breakdown-factors">
+            <div class="b-item">
+              <span class="b-name">Sector Multiple (M)</span>
+              <span class="b-val" id="m-val-sector">0.00x</span>
+            </div>
+            <div class="b-item">
+              <span class="b-name">Growth Factor (F_g)</span>
+              <span class="b-val" id="m-val-growth">1.00x</span>
+            </div>
+            <div class="b-item">
+              <span class="b-name">Maturity Factor (F_mat)</span>
+              <span class="b-val" id="m-val-maturity">1.00x</span>
+            </div>
+            <div class="b-item">
+              <span class="b-name">Multi-Chain Factor (F_c)</span>
+              <span class="b-val" id="m-val-chain">1.00x</span>
+            </div>
+          </div>
+          <div class="chains-display">
+            <strong>Active Chains:</strong> <span id="m-chains-list">Ethereum</span>
+          </div>
+        </div>
+
+        <div class="farm-plan-card">
+          <div class="farm-header">
+            <h3>Actionable Farm Plan &amp; Capital Execution</h3>
+            <span class="farm-tag">TGE ALLOCATION OPTIMIZER</span>
+          </div>
+          <ol class="farm-steps-list" id="m-farm-steps">
+            <!-- Farm steps inserted dynamically -->
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-left">make.fun token-radar-01 entry &bull; Deterministic On-Chain Valuation Engine</div>
+    <div class="footer-right">Node 22 Pure Standard Library &bull; 0 Dependencies &bull; Verified Offline</div>
+  </footer>
+
+  <script src="../data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
